@@ -1,25 +1,24 @@
 import Image from 'next/image'
 import { SettingsForm } from '@/components/admin/SettingsForm'
-import { getCategories, getProducts, getSiteSettings } from '@/lib/data'
+import { getAdminProductStats, getCategories, getSiteSettings } from '@/lib/data'
 import { formatInr } from '@/lib/format'
 
 export const metadata = { title: 'Dashboard | One Way Ceramic Studio' }
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  const [categories, products, settings] = await Promise.all([
+  const [categories, productStats, settings] = await Promise.all([
     getCategories({ admin: true }),
-    getProducts({ admin: true, limit: 500 }),
+    getAdminProductStats(10),
     getSiteSettings()
   ])
-  const active = products.filter((product) => product.is_active)
-  const latest = products.slice(0, 10)
+  const latest = productStats.latest
 
   return (
     <div className="grid gap-5">
       <div className="grid gap-3 md:grid-cols-3">
-        <Stat label="Total Products" value={products.length} />
-        <Stat label="Active Products" value={active.length} />
+        <Stat label="Total Products" value={productStats.total} />
+        <Stat label="Active Products" value={productStats.active} />
         <Stat label="Total Categories" value={categories.length} />
       </div>
       <div className="rounded-lg bg-white p-5 shadow-soft">

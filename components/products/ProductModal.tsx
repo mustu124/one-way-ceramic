@@ -52,7 +52,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
           </div>
           <h2 className="mt-3 font-heading text-4xl font-semibold leading-tight">{product.name}</h2>
           <div className="mt-3 flex items-end gap-3">
-            <span className={`font-heading text-3xl font-bold ${product.price_inr === 0 ? 'text-text-light' : 'text-gold-dark'}`}>{priceLabel(product.price_inr)}</span>
+            <span className={`text-3xl font-bold ${product.price_inr === 0 ? 'text-text-light' : 'text-gold-dark'}`}>{priceLabel(product.price_inr)}</span>
             {product.original_price_inr && <span className="pb-1 text-lg text-text-light line-through">{formatInr(product.original_price_inr)}</span>}
           </div>
           {product.description && <p className="mt-4 leading-7 text-text-light">{product.description}</p>}
@@ -72,7 +72,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
                   {added ? 'Added to Cart' : 'Add to Cart'}
                 </button>
                 <a
-                  href={waEnquiryLink(product.name, product.price_inr)}
+                  href={waEnquiryLink(product.name, product.price_inr, product.image_url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="min-h-9 text-center text-xs text-text-light underline underline-offset-2"
@@ -84,7 +84,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
               <div className="grid gap-3">
                 <p className="text-center text-sm text-text-light">Price available on request</p>
                 <a
-                  href={waEnquiryLink(product.name, 0)}
+                  href={waEnquiryLink(product.name, 0, product.image_url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex min-h-12 w-full items-center justify-center rounded-2xl bg-brown px-6 text-base font-semibold text-white active:bg-ink"

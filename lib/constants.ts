@@ -22,7 +22,9 @@ export const CATEGORY_META = [
   { name: 'Serveware', slug: 'serveware', folder: 'serveware', subs: ['Plates', 'Serving Set', 'Bowls', 'Platter'] },
   { name: 'Dinnerware', slug: 'dinnerware', folder: 'dinnerware', subs: ['Dinner Set'] },
   { name: 'Kitchenware', slug: 'kitchenware', folder: 'kitchenware', subs: ['Jars & Containers', 'Oil Bottles'] },
-  { name: 'Home Décor', slug: 'homedecor', folder: 'homedecor', subs: ['Pots', 'Vases', 'Decor Finds'] },
+  { name: 'Home Decor', slug: 'homedecor', folder: 'homedecor', subs: ['Vases', 'Decor Finds'] },
+  { name: 'Flower', slug: 'flower', folder: 'flower', subs: ['Flowers'] },
+  { name: 'Pot', slug: 'pot', folder: 'homedecor', subs: ['Pots'] },
   { name: 'Bathware', slug: 'bathware', folder: 'bathware', subs: ['Bath Accessories', 'Soap Dispensers'] }
 ]
 

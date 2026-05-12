@@ -8,9 +8,17 @@ insert into categories (name, slug, sort_order) values
   ('Serveware', 'serveware', 2),
   ('Dinnerware', 'dinnerware', 3),
   ('Kitchenware', 'kitchenware', 4),
-  ('Home Décor', 'homedecor', 5),
-  ('Bathware', 'bathware', 6)
+  ('Home Decor', 'homedecor', 5),
+  ('Flower', 'flower', 6),
+  ('Pot', 'pot', 7),
+  ('Bathware', 'bathware', 8)
 on conflict (slug) do update set name = excluded.name, sort_order = excluded.sort_order;
+
+update subcategories
+set category_id = (select id from categories where slug = 'pot'),
+    name = 'Pots',
+    sort_order = 1
+where slug = 'pots';
 
 insert into subcategories (category_id, name, slug, sort_order)
 select c.id, v.name, v.slug, v.sort_order
@@ -20,7 +28,9 @@ join (values
   ('serveware', 'Plates', 'plates', 1), ('serveware', 'Serving Set', 'serving-set', 2), ('serveware', 'Bowls', 'bowls', 3), ('serveware', 'Platter', 'platter', 4),
   ('dinnerware', 'Dinner Set', 'dinner-set', 1),
   ('kitchenware', 'Jars & Containers', 'jars-and-containers', 1), ('kitchenware', 'Oil Bottles', 'oil-bottles', 2),
-  ('homedecor', 'Pots', 'pots', 1), ('homedecor', 'Vases', 'vases', 2), ('homedecor', 'Decor Finds', 'decor-finds', 3),
+  ('homedecor', 'Vases', 'vases', 1), ('homedecor', 'Decor Finds', 'decor-finds', 2),
+  ('flower', 'Flowers', 'flowers', 1),
+  ('pot', 'Pots', 'pots', 1),
   ('bathware', 'Bath Accessories', 'bath-accessories', 1), ('bathware', 'Soap Dispensers', 'soap-dispensers', 2)
 ) as v(category_slug, name, slug, sort_order) on c.slug = v.category_slug
 where not exists (select 1 from subcategories s where s.category_id = c.id and s.slug = v.slug);
@@ -41,7 +51,7 @@ with product_ranges(slug, min_price, max_price, min_original, max_original) as (
   ('kettle-set', 1299, 2499, null, null), ('glasses', 249, 549, null, null), ('plates', 349, 699, null, null),
   ('serving-set', 999, 2199, 1299, 2799), ('bowls', 299, 649, null, null), ('platter', 799, 1499, null, null),
   ('dinner-set', 2499, 5999, 3499, 7499), ('jars-and-containers', 399, 849, null, null), ('oil-bottles', 499, 999, null, null),
-  ('pots', 699, 1799, null, null), ('vases', 549, 1299, 799, 1699), ('decor-finds', 349, 999, null, null),
+  ('flowers', 199, 799, null, null), ('pots', 699, 1799, null, null), ('vases', 549, 1299, 799, 1699), ('decor-finds', 349, 999, null, null),
   ('bath-accessories', 449, 1199, null, null), ('soap-dispensers', 599, 1399, null, null)
 ),
 names(n, adjective) as (

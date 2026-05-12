@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getRouteUser, validatePrice, validateStockQuantity } from '@/lib/auth-route'
 import { supabaseServer } from '@/lib/supabase-server'
 import { isUuid, normalizeProductPayload } from '@/lib/product-admin'
@@ -21,6 +22,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   if (stockError) return NextResponse.json({ error: stockError }, { status: 400 })
   const { data, error } = await supabaseServer.from('products').update(body).eq('id', params.id).select('*, subcategories(*, categories(*))').single()
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/dashboard/products')
+  if (data?.subcategories?.categories?.slug) revalidatePath(`/shop/${data.subcategories.categories.slug}`)
   return NextResponse.json({ product: data })
 }
 
@@ -39,5 +45,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   }
   const { error } = await supabaseServer.from('products').delete().eq('id', params.id)
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/dashboard/products')
   return NextResponse.json({ ok: true })
 }

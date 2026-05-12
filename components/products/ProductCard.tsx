@@ -54,7 +54,7 @@ export function ProductCard({
           <h3 className="line-clamp-2 font-heading text-xl font-semibold leading-6">{product.name}</h3>
         </button>
         <div className="mt-1 flex min-h-8 flex-wrap items-baseline gap-2">
-          <span className={`font-heading text-xl font-bold ${product.price_inr === 0 ? 'text-text-light' : 'text-gold-dark'}`}>{priceLabel(product.price_inr)}</span>
+          <span className={`text-xl font-bold ${product.price_inr === 0 ? 'text-text-light' : 'text-gold-dark'}`}>{priceLabel(product.price_inr)}</span>
           {product.original_price_inr && <span className="text-sm text-text-light line-through">{formatInr(product.original_price_inr)}</span>}
         </div>
         {product.price_inr > 0 ? (
@@ -67,7 +67,7 @@ export function ProductCard({
               {added ? 'Added to Cart' : 'Add to Cart'}
             </button>
             <a
-              href={waEnquiryLink(product.name, product.price_inr)}
+              href={waEnquiryLink(product.name, product.price_inr, product.image_url)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block min-h-8 text-center text-[11px] text-text-light underline underline-offset-2"
@@ -77,7 +77,7 @@ export function ProductCard({
           </>
         ) : (
           <a
-            href={waEnquiryLink(product.name, 0)}
+            href={waEnquiryLink(product.name, 0, product.image_url)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 flex min-h-11 items-center justify-center rounded-full bg-brown px-3 text-sm font-semibold text-white active:bg-ink"

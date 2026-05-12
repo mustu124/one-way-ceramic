@@ -1,10 +1,26 @@
 import type { Category, CategoryTree, Product, Review, SiteSettings, Subcategory } from '@/types'
+import { unstable_noStore as noStore } from 'next/cache'
+import { ensureCatalogBasicsOnce } from './catalog'
 import { fallbackCategories, fallbackCategoryTree, fallbackProducts, fallbackReviews, fallbackSettings, fallbackSubcategories } from './fallback-data'
 import { supabaseAnonServer, supabaseServer } from './supabase-server'
 
+export interface AdminProductStats {
+  total: number
+  active: number
+  latest: Product[]
+}
+
 export async function getCategories(options?: { admin?: boolean }): Promise<CategoryTree[]> {
+  noStore()
   const source = options?.admin ? supabaseServer : supabaseAnonServer
   if (!source) return options?.admin ? [] : fallbackCategoryTree
+  if (supabaseServer) {
+    try {
+      await ensureCatalogBasicsOnce(supabaseServer)
+    } catch {
+      if (options?.admin) return []
+    }
+  }
   const { data, error } = await source
     .from('categories')
     .select('*, subcategories(*)')
@@ -31,6 +47,7 @@ export async function getProducts(options?: {
   offset?: number
   admin?: boolean
 }): Promise<Product[]> {
+  noStore()
   const source = options?.admin ? supabaseServer : supabaseAnonServer
   if (!source) return options?.admin ? [] : filterFallbackProducts(options)
   const hasRelationshipFilter = Boolean(options?.category || options?.subcategory)
@@ -49,12 +66,41 @@ export async function getProducts(options?: {
   }
 
   const { data, error } = await query
-  if (error) return options?.admin || source ? [] : filterFallbackProducts(options)
-  if (!data?.length) return source ? [] : filterFallbackProducts(options)
+  if (error) return options?.admin ? [] : filterFallbackProducts(options)
+  if (!data?.length) return []
   return data as Product[]
 }
 
+export async function getAdminProductStats(limit = 10): Promise<AdminProductStats> {
+  noStore()
+  if (!supabaseServer) return { total: 0, active: 0, latest: [] }
+
+  const [totalResult, activeResult, latestResult] = await Promise.all([
+    supabaseServer
+      .from('products')
+      .select('id', { count: 'exact', head: true }),
+    supabaseServer
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true),
+    supabaseServer
+      .from('products')
+      .select('*, subcategories(*, categories(*))')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+  ])
+
+  if (latestResult.error) return { total: totalResult.count || 0, active: activeResult.count || 0, latest: [] }
+
+  return {
+    total: totalResult.count || 0,
+    active: activeResult.count || 0,
+    latest: (latestResult.data || []) as Product[]
+  }
+}
+
 export async function getReviews(): Promise<Review[]> {
+  noStore()
   if (!supabaseAnonServer) return fallbackReviews
   const { data, error } = await supabaseAnonServer.from('reviews').select('*').eq('is_active', true).order('created_at', { ascending: false })
   if (error || !data?.length) return fallbackReviews
@@ -62,6 +108,7 @@ export async function getReviews(): Promise<Review[]> {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
+  noStore()
   if (!supabaseAnonServer) return fallbackSettings
   const { data, error } = await supabaseAnonServer.from('site_settings').select('*')
   if (error || !data?.length) return fallbackSettings

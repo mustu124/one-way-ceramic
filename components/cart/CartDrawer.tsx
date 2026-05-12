@@ -59,7 +59,7 @@ export default function CartDrawer() {
           <div className="safe-bottom border-t border-beige2 bg-ivory px-4 py-4">
             <div className="flex items-baseline justify-between">
               <span className="text-sm text-text-light">Order Total</span>
-              <span className="font-heading text-3xl font-bold text-gold-dark">₹{total.toLocaleString('en-IN')}</span>
+              <span className="text-3xl font-bold text-gold-dark">₹{total.toLocaleString('en-IN')}</span>
             </div>
             <p className="mt-2 text-center text-[11px] leading-5 text-text-light">Final price confirmed by our team on WhatsApp. Bulk discounts available.</p>
             <a

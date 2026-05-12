@@ -16,7 +16,7 @@ export function ProductTable({ categories, initialProducts }: { categories: Cate
   const [deletingId, setDeletingId] = useState('')
 
   async function refresh(message = '') {
-    const res = await fetch('/api/products?admin=1&limit=500')
+    const res = await fetch('/api/products?admin=1&limit=500', { cache: 'no-store' })
     const json = await res.json()
     setProducts(json.products || products)
     setEditing(undefined)

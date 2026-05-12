@@ -8,6 +8,7 @@ const categoryImages: Record<string, string> = {
   serveware: '/web-images/serveware.jpg',
   dinnerware: '/web-images/dinnerware.jpg',
   kitchenware: '/web-images/kitchenware.webp',
+  pot: '/assets/homedecor/pots/IMG-4048.webp',
   bathware: '/web-images/bathware.jpg'
 }
 

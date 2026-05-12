@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getRouteUser } from '@/lib/auth-route'
 import { supabaseServer } from '@/lib/supabase-server'
 
@@ -10,5 +11,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const { subcategories, created_at, id, ...category } = body
   const { data, error } = await supabaseServer.from('categories').update(category).eq('id', params.id).select('*').single()
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/dashboard/categories')
+  if (data?.slug) revalidatePath(`/shop/${data.slug}`)
   return NextResponse.json({ category: data })
 }

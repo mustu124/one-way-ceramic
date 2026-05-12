@@ -16,6 +16,7 @@ const ranges: Record<string, [number, number, number | null, number | null]> = {
   'dinner-set': [2499, 5999, 3499, 7499],
   'jars-and-containers': [399, 849, null, null],
   'oil-bottles': [499, 999, null, null],
+  flowers: [199, 799, null, null],
   pots: [699, 1799, null, null],
   vases: [549, 1299, 799, 1699],
   'decor-finds': [349, 999, null, null],
@@ -42,20 +43,20 @@ function priceFor(slug: string, index: number) {
   return { price, original: Math.round((price * 1.28) / 10) * 10 - 1 }
 }
 
-function imageFilesFor(categorySlug: string, subcategoryName: string) {
+function imageFilesFor(categorySlug: string, subcategoryName: string, categoryFolder = categorySlug) {
   const subFolder = folderify(subcategoryName)
-  const dir = path.join(assetRoot, categorySlug, subFolder)
+  const dir = path.join(assetRoot, categoryFolder, subFolder)
   if (!fs.existsSync(dir)) return []
   return fs
     .readdirSync(dir)
     .filter((file) => imageExtensions.has(path.extname(file).toLowerCase()))
     .sort((a, b) => collator.compare(a, b))
-    .map((file) => `/assets/${categorySlug}/${subFolder}/${file}`)
+    .map((file) => `/assets/${categoryFolder}/${subFolder}/${file}`)
 }
 
 function firstCategoryImage(category: (typeof CATEGORY_META)[number]) {
   for (const subcategoryName of category.subs) {
-    const [first] = imageFilesFor(category.slug, subcategoryName)
+    const [first] = imageFilesFor(category.slug, subcategoryName, category.folder)
     if (first) return first
   }
   return null
@@ -86,7 +87,8 @@ export const fallbackCategoryTree: CategoryTree[] = fallbackCategories.map((cat)
 
 export const fallbackProducts: Product[] = fallbackSubcategories.flatMap((sub) => {
   const cat = fallbackCategories.find((category) => category.id === sub.category_id)!
-  const imageFiles = imageFilesFor(cat.slug, sub.name)
+  const meta = CATEGORY_META.find((category) => category.slug === cat.slug)
+  const imageFiles = imageFilesFor(cat.slug, sub.name, meta?.folder)
   return imageFiles.map((imageUrl, index) => {
     const number = index + 1
     const { price, original } = priceFor(sub.slug, number)

@@ -13,7 +13,9 @@ const CATEGORY_META = [
   { name: 'Serveware', slug: 'serveware', folder: 'serveware', subs: ['Plates', 'Serving Set', 'Bowls', 'Platter'] },
   { name: 'Dinnerware', slug: 'dinnerware', folder: 'dinnerware', subs: ['Dinner Set'] },
   { name: 'Kitchenware', slug: 'kitchenware', folder: 'kitchenware', subs: ['Jars & Containers', 'Oil Bottles'] },
-  { name: 'Home Decor', slug: 'homedecor', folder: 'homedecor', subs: ['Pots', 'Vases', 'Decor Finds'] },
+  { name: 'Home Decor', slug: 'homedecor', folder: 'homedecor', subs: ['Vases', 'Decor Finds'] },
+  { name: 'Flower', slug: 'flower', folder: 'flower', subs: ['Flowers'] },
+  { name: 'Pot', slug: 'pot', folder: 'homedecor', subs: ['Pots'] },
   { name: 'Bathware', slug: 'bathware', folder: 'bathware', subs: ['Bath Accessories', 'Soap Dispensers'] }
 ]
 
@@ -30,6 +32,7 @@ const PRICE_RANGES = {
   'dinner-set': [2499, 5999, 3499, 7499],
   'jars-and-containers': [399, 849, null, null],
   'oil-bottles': [499, 999, null, null],
+  flowers: [199, 799, null, null],
   pots: [699, 1799, null, null],
   vases: [549, 1299, 799, 1699],
   'decor-finds': [349, 999, null, null],
@@ -225,9 +228,14 @@ async function main() {
       const subcategoryFolder = folderify(subcategoryName)
       const subcategoryPath = path.join(assetsDir, category.folder, subcategoryFolder)
       const subcategoryRow = await ensureSubcategory(supabase, categoryRow.id, subcategoryName, subIndex + 1)
-      const files = (await readdir(subcategoryPath))
-        .filter((file) => IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase()))
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      let files = []
+      try {
+        files = (await readdir(subcategoryPath))
+          .filter((file) => IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase()))
+          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      } catch {
+        files = []
+      }
 
       for (const [fileIndex, fileName] of files.entries()) {
         const sortOrder = fileIndex + 1

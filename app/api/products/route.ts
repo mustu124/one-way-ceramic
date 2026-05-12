@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getProducts } from '@/lib/data'
 import { getRouteUser, validatePrice, validateStockQuantity } from '@/lib/auth-route'
 import { supabaseServer } from '@/lib/supabase-server'
@@ -15,7 +16,10 @@ export async function GET(req: NextRequest) {
     offset: Number(searchParams.get('offset') || 0),
     admin: searchParams.get('admin') === '1'
   })
-  return NextResponse.json({ products, total: products.length })
+  return NextResponse.json(
+    { products, total: products.length },
+    { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+  )
 }
 
 export async function POST(req: NextRequest) {
@@ -34,5 +38,10 @@ export async function POST(req: NextRequest) {
   if (stockError) return NextResponse.json({ error: stockError }, { status: 400 })
   const { data, error } = await supabaseServer.from('products').insert(body).select('*, subcategories(*, categories(*))').single()
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/dashboard/products')
+  if (data?.subcategories?.categories?.slug) revalidatePath(`/shop/${data.subcategories.categories.slug}`)
   return NextResponse.json({ product: data })
 }
