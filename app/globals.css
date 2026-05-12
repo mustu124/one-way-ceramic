@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ivory: #FAF7F2;
+  --beige: #EDE8DF;
+  --beige2: #E0D8CC;
+  --gold: #B8976A;
+  --gold-light: #D4B896;
+  --gold-dark: #8A6D45;
+  --brown: #5C4A32;
+  --text: #3A2E22;
+  --text-light: #7A6A57;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  background: var(--ivory);
+  color: var(--text);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.font-heading {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+.font-body {
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.section-pad {
+  padding: 4rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    padding: 5.5rem 2rem;
+  }
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.image-panel {
+  clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
+}
+
+.safe-bottom {
+  padding-bottom: calc(0.65rem + env(safe-area-inset-bottom));
+}
+
+.cart-drawer {
+  animation: cart-slide-in 220ms ease-out;
+}
+
+@keyframes cart-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.admin-input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(92, 74, 50, 0.18);
+  border-radius: 8px;
+  background: #fffaf4;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+}
+
+.admin-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184, 151, 106, 0.18);
+}
