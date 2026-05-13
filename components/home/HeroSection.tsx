@@ -23,8 +23,8 @@ export function HeroSection() {
             ))}
           </div>
         </div>
-        <div className="image-panel relative min-h-[360px] overflow-hidden bg-beige shadow-soft md:min-h-[560px]">
-          <Image src="/web-images/shopall.webp" alt="Handmade ceramic collection" fill priority className="object-cover" sizes="(min-width: 768px) 45vw, 100vw" unoptimized />
+        <div className="image-panel relative aspect-square min-h-[320px] overflow-hidden bg-beige shadow-soft">
+          <Image src="/web-images/home_page.jpeg" alt="Handmade ceramic collection" fill priority className="object-cover" sizes="(min-width: 768px) 45vw, 100vw" unoptimized />
           <div className="absolute inset-0 bg-gradient-to-t from-brown/25 to-transparent" />
         </div>
       </div>

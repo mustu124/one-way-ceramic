@@ -4,12 +4,14 @@ import { ArrowUpRight } from 'lucide-react'
 import type { CategoryTree } from '@/types'
 
 const categoryImages: Record<string, string> = {
-  drinkware: '/web-images/drinkware.webp',
-  serveware: '/web-images/serveware.jpg',
-  dinnerware: '/web-images/dinnerware.jpg',
-  kitchenware: '/web-images/kitchenware.webp',
-  pot: '/assets/homedecor/pots/IMG-4048.webp',
-  bathware: '/web-images/bathware.jpg'
+  drinkware: '/web-images/drinkware.jpeg',
+  serveware: '/web-images/serveware.jpeg',
+  dinnerware: '/web-images/dinnerware.jpeg',
+  kitchenware: '/web-images/kitchenware.jpeg',
+  homedecor: '/web-images/homedecor.jpeg',
+  flower: '/web-images/flower.jpeg',
+  pot: '/web-images/pots.jpeg',
+  bathware: '/web-images/bathware.jpeg'
 }
 
 export function CategoryGrid({ categories }: { categories: CategoryTree[] }) {
@@ -22,7 +24,7 @@ export function CategoryGrid({ categories }: { categories: CategoryTree[] }) {
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
           <Link href="/shop" className="relative col-span-2 min-h-[180px] overflow-hidden rounded-lg bg-brown p-5 text-white md:col-span-1 md:min-h-[250px]">
-            <Image src="/web-images/shopall.webp" alt="Shop all ceramic collections" fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" unoptimized />
+            <Image src="/web-images/shopall.jpeg" alt="Shop all ceramic collections" fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" unoptimized />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <p className="relative font-heading text-3xl font-semibold">Shop All</p>
             <p className="relative mt-2 max-w-[14rem] text-sm text-white/75">Explore every handmade product currently available.</p>
@@ -30,7 +32,7 @@ export function CategoryGrid({ categories }: { categories: CategoryTree[] }) {
           </Link>
           {categories.map((category) => (
             <Link key={category.id} href={`/shop/${category.slug}`} className="group relative min-h-[180px] overflow-hidden rounded-lg bg-brown md:min-h-[250px]">
-              <Image src={categoryImages[category.slug] || category.image_url || '/web-images/shopall.webp'} alt={category.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 768px) 33vw, 50vw" unoptimized />
+              <Image src={categoryImages[category.slug] || category.image_url || '/web-images/shopall.jpeg'} alt={category.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 768px) 33vw, 50vw" unoptimized />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-4 text-white">
                 <div className="flex items-end justify-between gap-2">
