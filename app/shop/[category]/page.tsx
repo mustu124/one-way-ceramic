@@ -11,11 +11,9 @@ export async function generateMetadata({ params }: { params: { category: string 
 }
 
 export default async function CategoryPage({
-  params,
-  searchParams
+  params
 }: {
   params: { category: string }
-  searchParams: { subcategory?: string }
 }) {
   const [categories, products] = await Promise.all([
     getCategories(),
@@ -30,7 +28,8 @@ export default async function CategoryPage({
         categories={categories}
         products={products}
         initialCategory={category.slug}
-        initialSubcategory={searchParams.subcategory || 'all'}
+        initialSubcategory="all"
+        showTabs={false}
         title={`${category.name} Collection`}
       />
     </div>
