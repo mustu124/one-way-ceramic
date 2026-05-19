@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { X } from 'lucide-react'
 import type { Product } from '@/types'
 import { discountPercent, formatInr, priceLabel } from '@/lib/format'
+import { isOutOfStock } from '@/lib/stock'
 import { waEnquiryLink } from '@/lib/waLink'
 import { useCart } from '@/context/CartContext'
 
@@ -15,9 +16,10 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
   if (!product) return null
   const discount = discountPercent(product.price_inr, product.original_price_inr)
   const subcategoryName = product.subcategories?.name || ''
+  const outOfStock = isOutOfStock(product)
 
   function handleAddToCart() {
-    if (!product) return
+    if (!product || outOfStock) return
     add(
       {
         productId: product.id,
@@ -47,6 +49,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
         </div>
         <div className="p-5 md:p-7">
           <div className="flex flex-wrap gap-2">
+            {outOfStock && <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">Out of Stock</span>}
             {product.badge && <span className="rounded-full bg-brown px-3 py-1 text-xs font-semibold text-white">{product.badge}</span>}
             {discount && <span className="rounded-full bg-clay px-3 py-1 text-xs font-semibold text-white">{discount}% OFF</span>}
           </div>
@@ -67,9 +70,10 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className={`min-h-12 w-full rounded-2xl px-6 text-base font-semibold text-white transition-colors ${added ? 'bg-gold-dark' : 'bg-brown active:bg-ink'}`}
+                  disabled={outOfStock}
+                  className={`min-h-12 w-full rounded-2xl px-6 text-base font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-text-light ${added ? 'bg-gold-dark' : 'bg-brown active:bg-ink'}`}
                 >
-                  {added ? 'Added to Cart' : 'Add to Cart'}
+                  {outOfStock ? 'Out of Stock' : added ? 'Added to Cart' : 'Add to Cart'}
                 </button>
                 <a
                   href={waEnquiryLink(product.name, product.price_inr, product.image_url)}
@@ -82,7 +86,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
               </div>
             ) : (
               <div className="grid gap-3">
-                <p className="text-center text-sm text-text-light">Price available on request</p>
+                <p className="text-center text-sm text-text-light">{outOfStock ? 'Out of Stock' : 'Price available on request'}</p>
                 <a
                   href={waEnquiryLink(product.name, 0, product.image_url)}
                   target="_blank"

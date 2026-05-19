@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import type { Product } from '@/types'
 import { discountPercent, formatInr, priceLabel } from '@/lib/format'
+import { isOutOfStock } from '@/lib/stock'
 import { waEnquiryLink } from '@/lib/waLink'
 import { useCart } from '@/context/CartContext'
 
@@ -20,8 +21,10 @@ export function ProductCard({
   const [added, setAdded] = useState(false)
   const discount = discountPercent(product.price_inr, product.original_price_inr)
   const productSubcategory = subcategoryName || product.subcategories?.name || ''
+  const outOfStock = isOutOfStock(product)
 
   function handleAddToCart() {
+    if (outOfStock) return
     add(
       {
         productId: product.id,
@@ -44,6 +47,7 @@ export function ProductCard({
         <div className="relative aspect-square bg-beige">
           <Image src={product.image_url} alt={product.name} fill className="object-cover" sizes="(min-width: 768px) 260px, 50vw" unoptimized />
           <div className="absolute left-2 top-2 flex max-w-[calc(100%-1rem)] flex-wrap gap-1.5">
+            {outOfStock && <span className="rounded-full bg-ink px-2.5 py-1 text-[11px] font-semibold text-white">Out of Stock</span>}
             {product.badge && <span className="rounded-full bg-brown/90 px-2.5 py-1 text-[11px] font-semibold text-white">{product.badge}</span>}
             {discount && <span className="rounded-full bg-clay px-2.5 py-1 text-[11px] font-semibold text-white">{discount}% OFF</span>}
           </div>
@@ -62,9 +66,10 @@ export function ProductCard({
             <button
               type="button"
               onClick={handleAddToCart}
-              className={`mt-3 flex min-h-11 w-full items-center justify-center rounded-full px-3 text-sm font-semibold text-white transition-colors ${added ? 'bg-gold-dark' : 'bg-brown active:bg-ink'}`}
+              disabled={outOfStock}
+              className={`mt-3 flex min-h-11 w-full items-center justify-center rounded-full px-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-text-light ${added ? 'bg-gold-dark' : 'bg-brown active:bg-ink'}`}
             >
-              {added ? 'Added to Cart' : 'Add to Cart'}
+              {outOfStock ? 'Out of Stock' : added ? 'Added to Cart' : 'Add to Cart'}
             </button>
             <a
               href={waEnquiryLink(product.name, product.price_inr, product.image_url)}
@@ -76,14 +81,17 @@ export function ProductCard({
             </a>
           </>
         ) : (
-          <a
-            href={waEnquiryLink(product.name, 0, product.image_url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex min-h-11 items-center justify-center rounded-full bg-brown px-3 text-sm font-semibold text-white active:bg-ink"
-          >
-            Enquire on WhatsApp
-          </a>
+          <div className="mt-3 grid gap-2">
+            {outOfStock && <p className="text-center text-sm font-semibold text-ink">Out of Stock</p>}
+            <a
+              href={waEnquiryLink(product.name, 0, product.image_url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-11 items-center justify-center rounded-full bg-brown px-3 text-sm font-semibold text-white active:bg-ink"
+            >
+              Enquire on WhatsApp
+            </a>
+          </div>
         )}
       </div>
     </article>
