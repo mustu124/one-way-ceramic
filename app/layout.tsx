@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Jost } from 'next/font/google'
-import Script from 'next/script'
 import './globals.css'
 import { BottomNav } from '@/components/layout/BottomNav'
 import CartDrawer from '@/components/cart/CartDrawer'
@@ -40,13 +39,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
-      <body className={`${cormorant.variable} ${jost.variable} font-body antialiased`}>
-        <Script
+      <head>
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4097770305482538"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
+      </head>
+      <body className={`${cormorant.variable} ${jost.variable} font-body antialiased`}>
         <CartProvider>
           <Navbar categories={categories} />
           <main className="min-h-screen pb-20 md:pb-0">{children}</main>
